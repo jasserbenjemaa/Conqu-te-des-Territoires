@@ -81,7 +81,6 @@ body {
 
 .imgs-container {
     position: absolute;
-    left: 5%;
     top: 50%;
     transform: translateY(-50%); /* vertically centered */
     display: grid;
@@ -89,20 +88,37 @@ body {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
 }
+.imgs-container-blue {
+    left: 5%;
+}
 
+.imgs-container-red {
+    left: auto; /*?exist*/
+    right: 5%;
+}
 .img-wrap {
     opacity: 0;
     transform: translateX(-60px);
+    pointer-events: none;
+    cursor: pointer;
     transition:
         opacity 0.5s ease,
-        transform 0.5s ease;
+        transform 0.5s ease,
+        filter 0.3s ease;
 }
 
 .img-wrap.visible {
     opacity: 1;
     transform: translateX(0);
+    pointer-events: auto;
+}
+.img-wrap-red {
+    transform: translateX(10px);
 }
 
+.img-wrap-red.visible {
+    transform: translateX(0);
+}
 .img-wrap img {
     width: 200px;
     height: 250px;
@@ -115,14 +131,6 @@ body {
     padding-top: 40px;
     grid-column: span 3;
     gap: 50px;
-}
-
-.img-wrap {
-    cursor: pointer;
-    transition:
-        opacity 0.5s ease,
-        transform 0.5s ease,
-        filter 0.3s ease;
 }
 
 .img-wrap:hover {
