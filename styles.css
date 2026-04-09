@@ -26,6 +26,10 @@ body {
 
     background-image: url("assets/ground.png");
     background-size: cover;
+
+    transform: translateX(0);
+    transition: transform 1s ease;
+    z-index: -1;
 }
 
 .carre {
@@ -54,15 +58,16 @@ body {
 .play-btn {
     height: 100px;
     width: 100px;
-    background: none;
     cursor: pointer;
     display: flex;
     justify-content: center;
-    transition: background 0.2s;
     position: absolute;
     top: 65%;
     left: 47%;
     border-radius: 50%;
+    transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
 }
 .play-btn.hidden {
     opacity: 0;
@@ -71,4 +76,24 @@ body {
 }
 .play-btn:hover {
     background: rgba(201, 162, 39, 0.3);
+}
+
+.img-wrap {
+    position: absolute; /*fassed layout ma 3adch chy dhaher ?*/
+    opacity: 0;
+    transform: translateY(-40px); /* starts above */
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease;
+}
+
+.img-wrap.visible {
+    opacity: 1;
+    transform: translateY(0); /* slides to normal position */
+}
+
+.img-wrap img {
+    width: 320px;
+    height: 320px;
+    display: block;
 }
