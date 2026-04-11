@@ -11,8 +11,13 @@ const checkBtnRed = document.getElementById("check-btn-red");
 
 ranks.forEach((rank) => {
   files.forEach((file) => {
-    const carre = document.createElement("div");
+    const canva = document.createElement("canvas");
+    const c = canva.getContext("2d");
+    const image = new Image();
+    image.src =
+      "assets/Units Sprites/Blue Units/Lancer/Lancer_Right_Attack.png";
     carre.classList.add("carre");
+
     carre.id = `${file}${rank}`;
     gameBoard.appendChild(carre);
   });
