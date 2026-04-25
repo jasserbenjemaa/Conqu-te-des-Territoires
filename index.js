@@ -5,6 +5,8 @@ const imgsBlue = document.querySelectorAll(".img-wrap-blue");
 const imgsRed = document.querySelectorAll(".img-wrap-red");
 const checkBtnBlue = document.getElementById("check-btn-blue");
 const checkBtnRed = document.getElementById("check-btn-red");
+const crossBtnBlue = document.getElementById("cross-btn-blue");
+const crossBtnRed = document.getElementById("cross-btn-red");
 
 function showImgs(imgs) {
   imgs.forEach((img, i) => {
@@ -62,7 +64,7 @@ function renderBoard() {
       // Valid moves / attacks
       if (moveSet.has(`${r},${c}`)) {
         const sq = game.board.sq(r, c);
-        cell.classList.add(sq.hasEnemy(pid) ? "can-attack" : "can-move");
+        cell.classList.add(sq.hasEnemy(pid) ? "can-attack" : "can-move"); //lina yetbadel ui ywarik win temchi w chkon attack
       }
 
       cell.addEventListener("click", () => onCellClick(r, c));
@@ -76,7 +78,7 @@ function renderBoard() {
           tok.classList.add("selected-unit");
         tok.textContent = unit.getLabel();
         tok.addEventListener("click", (e) => {
-          e.stopPropagation();
+          e.stopPropagation(); //??
           onUnitClick(unit);
         });
         cell.appendChild(tok);
@@ -89,6 +91,7 @@ function renderBoard() {
 
 function renderUI() {
   // START | PLACE_1 | PLACE_2 | BATTLE_1 | BATTLE_2 | OVER
+  const pid = game.currentPlayerId();
   switch (game.state) {
     case "START":
       banner.classList.add("visible");
@@ -103,6 +106,9 @@ function renderUI() {
       break;
 
     case "PLACE_1":
+      const unitsLeftBlue = 5 - game.player(pid).unitsPlaced;
+      console.log(unitsLeftBlue);
+
       checkBtnBlue.addEventListener("click", () => {
         hideImgs(imgsBlue);
         setTimeout(() => moveBoardLeft(), 1000);
@@ -110,9 +116,17 @@ function renderUI() {
         game.state = "PLACE_2";
         renderAll();
       });
+
+      crossBtnBlue.addEventListener("click", () => {
+        game.clearRowColumn(6, 8);
+        renderAll();
+      });
+
       break;
 
     case "PLACE_2":
+      const unitsLeftRed = 5 - game.player(pid).unitsPlaced;
+      console.log(unitsLeftRed);
       checkBtnRed.addEventListener("click", () => {
         hideImgs(imgsRed);
         setTimeout(() => moveBoardCenter(), 1000);

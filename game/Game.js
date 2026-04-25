@@ -11,7 +11,6 @@ class Game {
     this.validMoves = [];
     this.uidSeq = 0;
     this.chosenType = "warrior";
-    this.log = [];
   }
 
   reset() {
@@ -140,9 +139,17 @@ class Game {
     if (this.state === "BATTLE_1") this.state = "BATTLE_2";
     else if (this.state === "BATTLE_2") this.state = "BATTLE_1";
   }
-
-  addLog(msg) {
-    this.log.unshift(msg);
-    if (this.log.length > 40) this.log.pop();
+  clearRowColumn(row, col) {
+    const pl = this.p[this.currentPlayerId() - 1];
+    pl.unitsPlaced = 0;
+    for (let r = 0; r < row; r++) {
+      for (let c = 0; c < col; c++) {
+        const sq = this.board.sq(r, c);
+        for (const unit of sq.units) {
+          pl.killUnit(unit.id);
+        }
+        this.board.grid[r][c].units = [];
+      }
+    }
   }
 }

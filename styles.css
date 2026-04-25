@@ -149,10 +149,10 @@ body {
     cursor: pointer;
 }
 .zone-blue {
-    background: rgba(52, 152, 219, 0.3) !important;
+    background: rgba(52, 152, 219, 0.3);
 }
 .zone-red {
-    background: rgba(192, 57, 43, 0.3) !important;
+    background: rgba(192, 57, 43, 0.3);
 }
 
 /*==============================================================*/
@@ -417,26 +417,34 @@ h1 {
         0 0 40px rgba(0, 0, 0, 0.6),
         0 0 20px rgba(201, 162, 39, 0.08);
 }
-
+.cell {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    gap: 2px;
+    padding: 3px;
+}
 .cell.zone-p2 {
     outline: 2px dashed goldenrod;
     outline-offset: -5px;
-    background: rgba(192, 57, 43, 0.25) !important;
+    background: rgba(192, 57, 43, 0.25);
 }
 
 .cell.zone-p1 {
     outline: 2px dashed skyblue;
     outline-offset: -5px;
-    background: rgba(52, 152, 219, 0.25) !important;
+    background: rgba(52, 152, 219, 0.25);
 }
 
 .cell.can-move {
-    background: rgba(80, 200, 100, 0.2) !important;
+    background: rgba(80, 200, 100, 0.2);
     box-shadow: inset 0 0 10px rgba(80, 200, 100, 0.15);
 }
 
 .cell.can-attack {
-    background: rgba(220, 50, 50, 0.25) !important;
+    background: rgba(220, 50, 50, 0.25);
     box-shadow: inset 0 0 12px rgba(220, 50, 50, 0.2);
 }
 
@@ -459,8 +467,7 @@ h1 {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: rgba(100, 220, 100, 0.7);
-    box-shadow: 0 0 6px rgba(100, 220, 100, 0.5);
+    background: rgba(256, 256, 256, 0.7);
     pointer-events: none;
 }
 
@@ -477,8 +484,8 @@ h1 {
 
 /* Unit tokens */
 .unit-token {
-    width: 22px;
-    height: 22px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
