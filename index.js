@@ -107,7 +107,7 @@ function renderUI() {
 
     case "PLACE_1":
       const unitsLeftBlue = 5 - game.player(pid).unitsPlaced;
-      console.log(unitsLeftBlue);
+      console.log(`Player: ${game.player(pid).id}: ${unitsLeftBlue}`);
 
       checkBtnBlue.addEventListener("click", () => {
         hideImgs(imgsBlue);
@@ -118,7 +118,8 @@ function renderUI() {
       });
 
       crossBtnBlue.addEventListener("click", () => {
-        game.clearRowColumn(6, 8);
+        game.clearRowColumn(6);
+        game.clearRowColumn(7);
         renderAll();
       });
 
@@ -126,7 +127,7 @@ function renderUI() {
 
     case "PLACE_2":
       const unitsLeftRed = 5 - game.player(pid).unitsPlaced;
-      console.log(unitsLeftRed);
+      console.log(`Player: ${game.player(pid).id}: ${unitsLeftRed}`);
       checkBtnRed.addEventListener("click", () => {
         hideImgs(imgsRed);
         setTimeout(() => moveBoardCenter(), 1000);

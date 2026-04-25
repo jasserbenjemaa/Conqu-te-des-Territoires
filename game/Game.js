@@ -139,17 +139,16 @@ class Game {
     if (this.state === "BATTLE_1") this.state = "BATTLE_2";
     else if (this.state === "BATTLE_2") this.state = "BATTLE_1";
   }
-  clearRowColumn(row, col) {
+  clearRowColumn(row) {
     const pl = this.p[this.currentPlayerId() - 1];
     pl.unitsPlaced = 0;
-    for (let r = 0; r < row; r++) {
-      for (let c = 0; c < col; c++) {
-        const sq = this.board.sq(r, c);
-        for (const unit of sq.units) {
-          pl.killUnit(unit.id);
-        }
-        this.board.grid[r][c].units = [];
+
+    for (let c = 0; c < 8; c++) {
+      const sq = this.board.sq(row, c);
+      for (const unit of sq.units) {
+        pl.killUnit(unit.id);
       }
+      this.board.grid[row][c].units = [];
     }
   }
 }
