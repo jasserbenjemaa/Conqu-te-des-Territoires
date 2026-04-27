@@ -663,6 +663,80 @@
     .legend-dot.zone2 {
       background: rgba(52, 152, 219, 0.5);
     }
+
+    /* ── Power-ups / Power-downs ── */
+    .powerup-token {
+      position: absolute;
+      bottom: 3px;
+      right: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      pointer-events: none;
+      animation: pulse-power 2s ease-in-out infinite;
+    }
+    .powerup-token.boost {
+      background: rgba(50, 220, 120, 0.25);
+      border: 1px solid rgba(50, 220, 120, 0.6);
+      box-shadow: 0 0 6px rgba(50, 220, 120, 0.4);
+    }
+    .powerup-token.curse {
+      background: rgba(180, 50, 220, 0.25);
+      border: 1px solid rgba(180, 50, 220, 0.6);
+      box-shadow: 0 0 6px rgba(180, 50, 220, 0.4);
+    }
+    @keyframes pulse-power {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    /* Active buff/debuff indicator on unit token */
+    .unit-token[data-buff]::after {
+      content: attr(data-buff);
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      font-size: 8px;
+      background: rgba(50,220,120,0.9);
+      border-radius: 3px;
+      padding: 0 2px;
+      color: #000;
+      font-weight: 900;
+      pointer-events: none;
+    }
+    .unit-token[data-debuff]::after {
+      content: attr(data-debuff);
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      font-size: 8px;
+      background: rgba(180,50,220,0.9);
+      border-radius: 3px;
+      padding: 0 2px;
+      color: #fff;
+      font-weight: 900;
+      pointer-events: none;
+    }
+
+    /* Legend additions */
+    .legend-dot.powerup { background: rgba(50, 220, 120, 0.7); }
+    .legend-dot.powerdown { background: rgba(180, 50, 220, 0.7); }
+
+    /* Dice modifier display in overlay */
+    .dice-modifier {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+      min-height: 1.2em;
+      font-style: italic;
+    }
+    .dice-modifier.buff { color: #32dc78; }
+    .dice-modifier.debuff { color: #c850e0; }
   </style>
 </head>
 
@@ -756,6 +830,12 @@
         <div class="legend-item">
           <div class="legend-dot attack"></div> Can Attack
         </div>
+        <div class="legend-item">
+          <div class="legend-dot powerup"></div> ⚡ Power-Up
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot powerdown"></div> 💀 Power-Down
+        </div>
       </div>
     </div>
 
@@ -769,11 +849,13 @@
       <div class="dice-side">
         <div class="dice-player-label" id="dice-p1-label">Attacker</div>
         <div class="dice-face p1" id="dice-face-1">?</div>
+        <div class="dice-modifier" id="dice-mod-1"></div>
       </div>
       <div class="dice-vs">VS</div>
       <div class="dice-side">
         <div class="dice-player-label" id="dice-p2-label">Defender</div>
         <div class="dice-face p2" id="dice-face-2">?</div>
+        <div class="dice-modifier" id="dice-mod-2"></div>
       </div>
     </div>
     <div class="dice-verdict" id="dice-verdict"></div>
@@ -918,11 +1000,74 @@
         this.chosenType = 'warrior';
         this.log = [];
         this.validRangedAttacks = [];
+        // Power-up/down map: key = "r,c", value = { type, label, emoji, rollMod }
+        this.powerups = new Map();
+        // Unit dice modifiers: key = unit.id, value = { mod, label, emoji, turns }
+        this.unitMods = new Map();
       }
 
       reset() { this._init(); }
 
       player(id) { return this.p[id - 1]; }
+
+      /* ── Power-up definitions ── */
+      static POWERUP_DEFS = [
+        { type: 'boost', label: '+2',  emoji: '⚡', rollMod: +2, turns: 2, desc: 'Dice +2 for 2 turns' },
+        { type: 'boost', label: '+1',  emoji: '🔥', rollMod: +1, turns: 3, desc: 'Dice +1 for 3 turns' },
+        { type: 'curse', label: '-1',  emoji: '💀', rollMod: -1, turns: 2, desc: 'Dice -1 for 2 turns' },
+        { type: 'curse', label: '-2',  emoji: '🌑', rollMod: -2, turns: 2, desc: 'Dice -2 for 2 turns' },
+        { type: 'boost', label: '+1',  emoji: '✨', rollMod: +1, turns: 2, desc: 'Dice +1 for 2 turns' },
+        { type: 'curse', label: '-1',  emoji: '🕸', rollMod: -1, turns: 3, desc: 'Dice -1 for 3 turns' },
+      ];
+
+      /* Spawn up to `count` random power-ups on empty, unoccupied cells */
+      spawnPowerups(count = 4) {
+        const empty = [];
+        for (let r = 0; r < 8; r++) {
+          for (let c = 0; c < 8; c++) {
+            const key = `${r},${c}`;
+            if (this.board.sq(r, c).units.length === 0 && !this.powerups.has(key)) {
+              empty.push(key);
+            }
+          }
+        }
+        // Shuffle and pick
+        for (let i = empty.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [empty[i], empty[j]] = [empty[j], empty[i]];
+        }
+        const defs = Game.POWERUP_DEFS;
+        for (let i = 0; i < Math.min(count, empty.length); i++) {
+          const def = defs[Math.floor(Math.random() * defs.length)];
+          this.powerups.set(empty[i], { ...def });
+        }
+      }
+
+      /* Check and consume any power-up on a cell a unit lands on */
+      checkPowerup(unit, r, c) {
+        const key = `${r},${c}`;
+        if (!this.powerups.has(key)) return;
+        const pu = this.powerups.get(key);
+        this.powerups.delete(key);
+        this.unitMods.set(unit.id, { mod: pu.rollMod, label: pu.label, emoji: pu.emoji, turns: pu.turns });
+        const word = pu.rollMod > 0 ? 'gains' : 'is cursed with';
+        this.addLog(`${pu.emoji} ${this.player(unit.player).name}'s ${unit.getName()} ${word} ${pu.desc}!`);
+      }
+
+      /* Tick down modifier turns at end of each unit's action */
+      tickMod(unitId) {
+        if (!this.unitMods.has(unitId)) return;
+        const m = this.unitMods.get(unitId);
+        m.turns--;
+        if (m.turns <= 0) {
+          this.unitMods.delete(unitId);
+        }
+      }
+
+      /* Get total roll modifier for a unit (0 if none) */
+      getMod(unitId) {
+        return this.unitMods.has(unitId) ? this.unitMods.get(unitId).mod : 0;
+      }
 
       currentPlayerId() {
         if (this.state === 'PLACE_1' || this.state === 'BATTLE_1') return 1;
@@ -962,7 +1107,9 @@
           } else {
             //lina nzid de w nbadel state
             this.state = 'BATTLE_1';
+            this.spawnPowerups(5);
             this.addLog(`⚔ Battle begins! Player ${pid} moves first.`);
+            this.addLog(`⚡ ${this.powerups.size} power-ups & curses scattered across the field!`);
           }
         }
         return true;//3lch return true
@@ -995,8 +1142,12 @@
           return { kind: 'combat', attacker, sq, toR: r, toC: c, ranged: isRanged };
         }
         this.board.move(attacker, r, c);
+        this.checkPowerup(attacker, r, c);
+        this.tickMod(attacker.id);
         this.addLog(`${this.player(attacker.player).name}'s ${attacker.getName()} → ${coord(r, c)}`);
         this._nextTurn();
+        // Occasionally spawn a new powerup after moves
+        if (Math.random() < 0.3 && this.powerups.size < 4) this.spawnPowerups(1);
         return { kind: 'move' };
       }
 
@@ -1013,13 +1164,18 @@
         }
         if (allDead && !ranged) {
           this.board.move(attacker, toR, toC);
+          this.checkPowerup(attacker, toR, toC);
           this.addLog(`${this.player(attacker.player).name}'s ${attacker.getName()} captured ${coord(toR, toC)}!`);
         } else if (allDead && ranged) {
           this.board.move(attacker, toR, toC);
+          this.checkPowerup(attacker, toR, toC);
           this.addLog(`${this.player(attacker.player).name}'s ${attacker.getName()} strikes from afar and takes ${coord(toR, toC)}!`);
         } else {
           this.addLog(`Some defenders held. ${attacker.getName()} is repelled.`);
         }
+        this.tickMod(attacker.id);
+        // Occasionally spawn a new powerup
+        if (Math.random() < 0.3 && this.powerups.size < 4) this.spawnPowerups(1);
         if (!this._checkWin()) this._nextTurn();
       }
 
@@ -1106,8 +1262,25 @@
             tok.className = `unit-token p${unit.player}`;
             if (selUnit && selUnit.id === unit.id) tok.classList.add('selected-unit');
             tok.textContent = unit.getLabel();
+            // Show active buff/debuff badge
+            const m = game.unitMods.get(unit.id);
+            if (m) {
+              if (m.mod > 0) tok.setAttribute('data-buff', `${m.emoji}+${m.mod}(${m.turns})`);
+              else tok.setAttribute('data-debuff', `${m.emoji}${m.mod}(${m.turns})`);
+            }
             tok.addEventListener('click', e => { e.stopPropagation(); onUnitClick(unit); });
             cell.appendChild(tok);
+          }
+
+          // Power-up token on empty cells
+          const puKey = `${r},${c}`;
+          if (game.powerups && game.powerups.has(puKey)) {
+            const pu = game.powerups.get(puKey);
+            const puEl = document.createElement('div');
+            puEl.className = `powerup-token ${pu.type}`;
+            puEl.textContent = pu.emoji;
+            puEl.title = pu.desc;
+            cell.appendChild(puEl);
           }
 
           boardEl.appendChild(cell);
@@ -1214,9 +1387,13 @@
     function launchCombat(attacker, sq, toR, toC, ranged = false) {
       const enemies = sq.enemiesOf(attacker.player);
       combatQueue = enemies.map(defender => {
-        const aRoll = d6();
-        const dRoll = d6();
-        return { attacker, defender, sq, toR, toC, aRoll, dRoll, atkWins: aRoll > dRoll, ranged };
+        const baseA = d6();
+        const baseD = d6();
+        const aMod = game.getMod(attacker.id);
+        const dMod = game.getMod(defender.id);
+        const aRoll = Math.max(1, Math.min(6, baseA + aMod));
+        const dRoll = Math.max(1, Math.min(6, baseD + dMod));
+        return { attacker, defender, sq, toR, toC, baseA, baseD, aMod, dMod, aRoll, dRoll, atkWins: aRoll > dRoll, ranged };
       });
       combatIdx = 0;
       showCombat();
@@ -1229,6 +1406,8 @@
       const info = document.getElementById('dice-info');
       const verd = document.getElementById('dice-verdict');
       const btn = document.getElementById('dice-continue');
+      const mod1El = document.getElementById('dice-mod-1');
+      const mod2El = document.getElementById('dice-mod-2');
 
       // Player-color classes
       face1.className = `dice-face p${res.attacker.player}`;
@@ -1242,6 +1421,19 @@
       face2.textContent = '?';
       verd.textContent = '';
       btn.disabled = true;
+
+      // Show modifiers
+      if (res.aMod !== 0) {
+        const aMu = game.unitMods.get(res.attacker.id);
+        mod1El.textContent = res.aMod > 0 ? `${aMu ? aMu.emoji : '⚡'} +${res.aMod} bonus` : `${aMu ? aMu.emoji : '💀'} ${res.aMod} curse`;
+        mod1El.className = `dice-modifier ${res.aMod > 0 ? 'buff' : 'debuff'}`;
+      } else { mod1El.textContent = ''; mod1El.className = 'dice-modifier'; }
+
+      if (res.dMod !== 0) {
+        const dMu = game.unitMods.get(res.defender.id);
+        mod2El.textContent = res.dMod > 0 ? `${dMu ? dMu.emoji : '⚡'} +${res.dMod} bonus` : `${dMu ? dMu.emoji : '💀'} ${res.dMod} curse`;
+        mod2El.className = `dice-modifier ${res.dMod > 0 ? 'buff' : 'debuff'}`;
+      } else { mod2El.textContent = ''; mod2El.className = 'dice-modifier'; }
 
       document.getElementById('dice-overlay').classList.add('show');
 
