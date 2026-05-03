@@ -1,89 +1,145 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="./styles.css" />
-        <title>js game</title>
-    </head>
-    <body>
-        <div class="imgs-container imgs-container-red">
-            <div class="img-wrap img-wrap-red unit-type-btn" data-type="lancer">
-                <img src="assets/Human Avatars/RL.png" />
-            </div>
-            <div class="img-wrap img-wrap-red unit-type-btn" data-type="monk">
-                <img src="assets/Human Avatars/RM.png" />
-            </div>
-            <div
-                class="img-wrap img-wrap-red unit-type-btn"
-                data-type="warrior"
-            >
-                <img src="assets/Human Avatars/RW.png" />
-            </div>
-            <div class="img-wrap img-wrap-red">
-                <img src="assets/Human Avatars/lancer_stats.png" />
-            </div>
-            <div class="img-wrap img-wrap-red">
-                <img src="assets/Human Avatars/monk_stats.png" />
-            </div>
-            <div class="img-wrap img-wrap-red">
-                <img src="assets/Human Avatars/worrior_stats.png" />
-            </div>
-            <div class="btn-wrap">
-                <div class="img-wrap img-wrap-red btn" id="check-btn-red">
-                    <img src="assets/check_btn.png" />
-                </div>
-                <div class="img-wrap img-wrap-red btn" id="cross-btn-red">
-                    <img src="assets/cross_btn.png" />
-                </div>
-            </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>js game</title>
+  </head>
+  <body>
+    <div class="imgs-container imgs-container-red">
+      <div class="img-wrap img-wrap-red unit-type-btn" data-type="lancer">
+        <img src="assets/Human Avatars/RL.png" />
+      </div>
+      <div class="img-wrap img-wrap-red unit-type-btn" data-type="monk">
+        <img src="assets/Human Avatars/RM.png" />
+      </div>
+      <div class="img-wrap img-wrap-red unit-type-btn" data-type="warrior">
+        <img src="assets/Human Avatars/RW.png" />
+      </div>
+      <div class="img-wrap img-wrap-red stats">
+        <img src="assets/Human Avatars/cavalier_stats.png" />
+      </div>
+      <div class="img-wrap img-wrap-red stats">
+        <img src="assets/Human Avatars/Tank_stats.png" />
+      </div>
+      <div class="img-wrap img-wrap-red stats">
+        <img src="assets/Human Avatars/soldat_stats.png" />
+      </div>
+      <div class="btn-wrap">
+        <div class="img-wrap img-wrap-red btn" id="check-btn-red">
+          <img src="assets/check_btn.png" />
         </div>
-        <div class="imgs-container imgs-container-blue">
-            <div
-                class="img-wrap img-wrap-blue unit-type-btn"
-                data-type="lancer"
-            >
-                <img src="assets/Human Avatars/BL.png" />
-            </div>
-            <div class="img-wrap img-wrap-blue unit-type-btn" data-type="monk">
-                <img src="assets/Human Avatars/BM.png" />
-            </div>
-            <div
-                class="img-wrap img-wrap-blue unit-type-btn"
-                data-type="warrior"
-            >
-                <img src="assets/Human Avatars/BW.png" />
-            </div>
-            <div class="img-wrap img-wrap-blue">
-                <img src="assets/Human Avatars/lancer_stats.png" />
-            </div>
-            <div class="img-wrap img-wrap-blue">
-                <img src="assets/Human Avatars/monk_stats.png" />
-            </div>
-            <div class="img-wrap img-wrap-blue">
-                <img src="assets/Human Avatars/worrior_stats.png" />
-            </div>
-            <div class="btn-wrap">
-                <div class="img-wrap img-wrap-blue btn" id="check-btn-blue">
-                    <img src="assets/check_btn.png" />
-                </div>
-                <div class="img-wrap img-wrap-blue btn" id="cross-btn-blue">
-                    <img src="assets/cross_btn.png" />
-                </div>
-            </div>
+        <div class="img-wrap img-wrap-red btn" id="cross-btn-red">
+          <img src="assets/cross_btn.png" />
         </div>
-        <div class="banner" id="banner">
-            <img src="assets/banner.png" alt="Conquête des Territoires" />
+      </div>
+    </div>
+    <div class="imgs-container imgs-container-blue">
+      <div class="img-wrap img-wrap-blue unit-type-btn" data-type="lancer">
+        <img src="assets/Human Avatars/BL.png" />
+      </div>
+      <div class="img-wrap img-wrap-blue unit-type-btn" data-type="monk">
+        <img src="assets/Human Avatars/BM.png" />
+      </div>
+      <div class="img-wrap img-wrap-blue unit-type-btn" data-type="warrior">
+        <img src="assets/Human Avatars/BW.png" />
+      </div>
+      <div class="img-wrap img-wrap-blue stats">
+        <img src="assets/Human Avatars/cavalier_stats.png" />
+      </div>
+      <div class="img-wrap img-wrap-blue stats">
+        <img src="assets/Human Avatars/Tank_stats.png" />
+      </div>
+      <div class="img-wrap img-wrap-blue stats">
+        <img src="assets/Human Avatars/soldat_stats.png" />
+      </div>
+      <div class="btn-wrap">
+        <div class="img-wrap img-wrap-blue btn" id="check-btn-blue">
+          <img src="assets/check_btn.png" />
         </div>
-        <div class="play-btn" id="playBtn">
-            <img src="assets/playBtn.png" alt="play button" />
+        <div class="img-wrap img-wrap-blue btn" id="cross-btn-blue">
+          <img src="assets/cross_btn.png" />
         </div>
-        <div id="gameboard" class="board"></div>
-        <script src="game/Unites.js"></script>
-        <script src="game/GridSquare.js"></script>
-        <script src="game/Board.js"></script>
-        <script src="game/Player.js"></script>
-        <script src="game/Game.js"></script>
-        <script src="index.js"></script>
-    </body>
+      </div>
+    </div>
+    <div class="banner" id="banner">
+      <img src="assets/banner.png" alt="Conquête des Territoires" />
+    </div>
+
+    <div class="play-btn-div">
+      <img
+        src="assets/2p_player.png"
+        alt="play button for two player"
+        class="play-btn"
+        id="playBtn"
+      />
+      <img
+        src="assets/ai_player.png"
+        alt="play button against ai"
+        class="play-btn"
+        id="aiPlayBtn"
+      />
+    </div>
+
+    <div id="gameboard" class="board"></div>
+
+    <!-- ── Dice Combat Overlay ── -->
+    <div id="dice-overlay">
+      <div class="dice-title">⚔ Combat</div>
+      <div id="dice-info" class="dice-combatants"></div>
+      <div class="dice-arena">
+        <div class="dice-side">
+          <div class="dice-player-label" id="dice-p1-label"></div>
+          <div class="dice-face" id="dice-face-1"></div>
+          <div class="dice-stat" id="dice-stat-1"></div>
+          <div class="dice-modifier" id="dice-mod-1"></div>
+          <div class="dice-total" id="dice-total-1"></div>
+        </div>
+        <div class="dice-vs">VS</div>
+        <div class="dice-side">
+          <div class="dice-player-label" id="dice-p2-label"></div>
+          <div class="dice-face" id="dice-face-2"></div>
+          <div class="dice-stat" id="dice-stat-2"></div>
+          <div class="dice-modifier" id="dice-mod-2"></div>
+          <div class="dice-total" id="dice-total-2"></div>
+        </div>
+      </div>
+      <div class="dice-verdict" id="dice-verdict"></div>
+      <button id="dice-continue" onclick="advanceCombat()">Continuer</button>
+    </div>
+
+    <!-- ── Territory Stats ── -->
+    <div class="territory-stat territory-stat--blue" id="territory-blue">
+      <div class="ts-label">Joueur 1</div>
+      <div class="ts-pct" id="ts-pct-blue">0%</div>
+      <div class="ts-bar-track">
+        <div class="ts-bar ts-bar--blue" id="ts-bar-blue"></div>
+      </div>
+      <div class="ts-count" id="ts-count-blue">0 / 64</div>
+    </div>
+
+    <div class="territory-stat territory-stat--red" id="territory-red">
+      <div class="ts-label">Joueur 2</div>
+      <div class="ts-pct" id="ts-pct-red">0%</div>
+      <div class="ts-bar-track">
+        <div class="ts-bar ts-bar--red" id="ts-bar-red"></div>
+      </div>
+      <div class="ts-count" id="ts-count-red">0 / 64</div>
+    </div>
+
+    <!-- ── Win Overlay ── -->
+    <div id="win-overlay">
+      <div class="win-title">🏆 Victoire !</div>
+      <div id="win-sub-text" class="win-sub"></div>
+      <button id="restart-btn-win">Rejouer</button>
+    </div>
+
+    <script src="game/Unites.js"></script>
+    <script src="game/GridSquare.js"></script>
+    <script src="game/Board.js"></script>
+    <script src="game/Player.js"></script>
+    <script src="game/Game.js"></script>
+    <script src="index.js"></script>
+  </body>
 </html>

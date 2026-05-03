@@ -50,28 +50,55 @@ body {
     display: block;
 }
 
-.play-btn {
+.play-btn-div {
     z-index: 1;
     height: 100px;
-    width: 100px;
-    cursor: pointer;
+    width: 500px;
+
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+
     position: absolute;
     top: 65%;
-    left: 47%;
+    left: 38%;
     border-radius: 50%;
     transition:
         opacity 0.4s ease,
         transform 0.4s ease;
 }
-.play-btn.hidden {
+.play-btn-div.hidden {
     opacity: 0;
     transform: scale(0.5);
     pointer-events: none; /*the button still clickable even when invisible*/
 }
+.play-btn-div img{
+    height: 200px;
+    width: 200px;
+}
+
+.play-btn {
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease,
+        opacity 0.2s ease;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+    border-radius: 8px;
+}
+
 .play-btn:hover {
-    background: rgba(201, 162, 39, 0.3);
+    transform: scale(1.08) translateY(-4px);
+    filter:
+        drop-shadow(0 8px 20px rgba(201, 162, 39, 0.6))
+        brightness(1.15);
+}
+
+.play-btn:active {
+    transform: scale(0.95) translateY(0px);
+    filter:
+        drop-shadow(0 2px 6px rgba(201, 162, 39, 0.4))
+        brightness(0.95);
+    transition-duration: 0.08s;
 }
 
 .imgs-container {
@@ -117,6 +144,9 @@ body {
     width: 200px;
     height: 250px;
     display: block;
+}
+.stats img{
+    height: 100%;
 }
 .btn-wrap {
     display: flex;
@@ -180,7 +210,7 @@ body {
 
 body {
     color: var(--text);
-    font-family: "Crimson Text", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -194,7 +224,7 @@ header {
 }
 
 h1 {
-    font-family: "Cinzel", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 2rem;
     letter-spacing: 0.25em;
     color: var(--gold);
@@ -228,7 +258,7 @@ h1 {
 }
 
 .panel-title {
-    font-family: "Cinzel", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 0.62rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -251,7 +281,7 @@ h1 {
     text-align: center;
     padding: 10px 8px;
     border-radius: 2px;
-    font-family: "Cinzel", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -375,7 +405,7 @@ h1 {
 .coord-row {
     display: flex;
     padding-left: 22px;
-    font-family: "Cinzel", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 0.58rem;
     color: var(--text-dim);
     letter-spacing: 0.05em;
@@ -394,7 +424,7 @@ h1 {
 .row-coords {
     display: flex;
     flex-direction: column;
-    font-family: "Cinzel", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 0.58rem;
     color: var(--text-dim);
     margin-right: 4px;
@@ -492,7 +522,7 @@ h1 {
     justify-content: center;
     font-size: 10px;
     font-weight: 700;
-    font-family: "Cinzel", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     border: 1.5px solid;
     cursor: pointer;
     transition:
@@ -563,7 +593,7 @@ h1 {
 }
 
 .dice-title {
-    font-family: "Cinzel", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 1.1rem;
     letter-spacing: 0.25em;
     color: var(--gold);
@@ -588,7 +618,7 @@ h1 {
 }
 
 .dice-player-label {
-    font-family: "Cinzel", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 0.65rem;
     letter-spacing: 0.15em;
     color: var(--text-dim);
@@ -603,7 +633,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "Cinzel", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 2.8rem;
     font-weight: 900;
     background: var(--surface2);
@@ -643,14 +673,14 @@ h1 {
 }
 
 .dice-vs {
-    font-family: "Cinzel", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 1.4rem;
     font-weight: 900;
     color: rgba(201, 162, 39, 0.4);
 }
 
 .dice-verdict {
-    font-family: "Cinzel", serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
     font-size: 1rem;
     letter-spacing: 0.05em;
     text-align: center;
@@ -704,3 +734,235 @@ h1 {
     background: rgba(52, 152, 219, 0.5);
 }
 /*==============================================================*/
+
+/* ══════════════════════════════════════════
+   ADDED — game features
+══════════════════════════════════════════ */
+
+/* ── Territory ownership dot (bottom-right of cell) ── */
+.cell-owner {
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 1;
+}
+.owner-p1 { background: #3498db; }   /* blue  — Player 1 */
+.owner-p2 { background: #e74c3c; }   /* red   — Player 2 */
+
+/* ── Power-up tokens ── */
+.powerup-token {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    line-height: 1;
+    z-index: 3;
+    pointer-events: none;
+   
+}
+.powerup-token.boost { filter: drop-shadow(0 0 5px rgba(255, 220, 60, 0.8)); }
+.powerup-token.curse { filter: drop-shadow(0 0 5px rgba(200, 50, 50, 0.8)); }
+
+
+/* ── Ranged attack targets (Monk) ── */
+.cell.can-ranged {
+    background: rgba(160, 80, 220, 0.22);
+    box-shadow: inset 0 0 12px rgba(160, 80, 220, 0.18);
+}
+.cell.can-ranged::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(180, 100, 240, 0.85);
+    box-shadow: 0 0 8px rgba(180, 100, 240, 0.5);
+    pointer-events: none;
+}
+
+/* ── Selected cell outline ── */
+.cell.sel-cell {
+    outline: 2px solid rgba(201, 162, 39, 0.85);
+    outline-offset: -2px;
+}
+
+/* ── Buff / debuff emoji badge on unit tokens ── */
+.unit-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 10px;
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* ── Dice overlay — missing pieces ── */
+#dice-continue {
+    background: var(--gold, #c9a227);
+    color: #111;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 3px;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    margin-top: 4px;
+}
+#dice-continue:hover:not(:disabled) {
+    background: var(--gold-light, #e8c04a);
+    transform: scale(1.04);
+}
+#dice-continue:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.dice-stat {
+    font-size: 0.73rem;
+    color: var(--text-dim, #7a7065);
+    text-align: center;
+    margin-top: 5px;
+    min-height: 1em;
+}
+.dice-total {
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 6px;
+    min-height: 1.3em;
+    transition: color 0.3s;
+}
+.dice-modifier {
+    font-size: 0.73rem;
+    text-align: center;
+    margin-top: 3px;
+    min-height: 1em;
+}
+.dice-modifier.buff   { color: #32dc78; }
+.dice-modifier.debuff { color: #e74c3c; }
+
+/* ── Win overlay ── */
+#win-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 8, 0.93);
+    backdrop-filter: blur(6px);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+}
+#win-overlay.show { display: flex; }
+
+.win-title {
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+    font-size: 2.2rem;
+    letter-spacing: 0.25em;
+    color: var(--gold, #c9a227);
+    text-shadow:
+        0 0 40px rgba(201, 162, 39, 0.6),
+        0 2px 4px rgba(0,0,0,0.8);
+    text-transform: uppercase;
+}
+.win-sub {
+    font-size: 1rem;
+    color: var(--text-dim, #7a7065);
+    font-style: italic;
+    text-align: center;
+    letter-spacing: 0.05em;
+}
+#restart-btn-win {
+    background: var(--gold, #c9a227);
+    color: #111;
+    border: none;
+    padding: 12px 36px;
+    border-radius: 3px;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s, transform 0.2s;
+}
+#restart-btn-win:hover {
+    background: var(--gold-light, #e8c04a);
+    transform: scale(1.06);
+}
+
+/* ── Territory stat panels ── */
+.territory-stat {
+    position: fixed;
+    top: 20%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: rgba(20, 20, 26, 0.82);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 14px;
+    width: 450px;
+   
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+.territory-stat.visible {
+    opacity: 1;
+}
+.territory-stat--blue { left: 32px; border-color: rgba(52, 152, 219, 0.4); }
+.territory-stat--red  { right: 32px; border-color: rgba(231, 76, 60, 0.4); }
+
+.ts-label {
+    font-size: 50px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+.territory-stat--blue .ts-label { color: #3498db; }
+.territory-stat--red  .ts-label { color: #e74c3c; }
+
+.ts-pct {
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+    font-size:100px;
+    font-weight: 700;
+    line-height: 1;
+}
+.territory-stat--blue .ts-pct { color: #3498db; text-shadow: 0 0 12px rgba(52,152,219,0.5); }
+.territory-stat--red  .ts-pct { color: #e74c3c; text-shadow: 0 0 12px rgba(231,76,60,0.5); }
+
+.ts-bar-track {
+    width: 100%;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.ts-bar {
+    height: 100%;
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.4s ease;
+}
+.ts-bar--blue { background: #3498db; }
+.ts-bar--red  { background: #e74c3c; }
+
+.ts-count {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+}

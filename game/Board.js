@@ -1,7 +1,7 @@
 class Board {
   constructor() {
     this.grid = Array.from({ length: 8 }, (_, r) =>
-      Array.from({ length: 8 }, (_, c) => new GridSquare(r, c)),
+      Array.from({ length: 8 }, (_, c) => new GridSquare(r, c))
     );
   }
   sq(r, c) {

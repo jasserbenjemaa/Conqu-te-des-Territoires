@@ -1,53 +1,17 @@
 class Unit {
-  weights = { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1 };
-  defenseFavor = 0;
-  attackFavor = 0;
-
   constructor(type, player, id) {
     this.type = type;
     this.player = player;
     this.id = id;
     this.row = null;
     this.col = null;
+    this.atk = 0;
+    this.def = 0;
   }
-
-  weightedDistanceRoll(dist, move) {
-    const favor = move === "defense" ? this.defenseFavor : this.attackFavor;
-    const maxDist = 14;
-    const bias = 1 - dist / maxDist;
-    const weights = [1, 1, 1, 1, 1, 1];
-    for (let i = 0; i < 6; i++) {
-      const face = i + 1;
-      const distEffect =
-        bias > 0.5 ? bias * face * 0.5 : (1 - bias) * (7 - face) * 0.5;
-      const favorEffect =
-        favor > 0 ? favor * face * 0.3 : Math.abs(favor) * (7 - face) * 0.3;
-      weights[i] += distEffect + favorEffect;
-    }
-    const pool = [];
-    weights.forEach((w, i) => {
-      for (let j = 0; j < Math.round(w * 10); j++) pool.push(i + 1);
-    });
-    return pool[Math.floor(Math.random() * pool.length)];
-  }
-
-  weightedD6(move) {
-    const favor = move === "defense" ? this.defenseFavor : this.attackFavor;
-    const boosted = {};
-    for (const [face, weight] of Object.entries(this.weights)) {
-      const f = Number(face);
-      const favorEffect =
-        favor > 0 ? favor * f * 0.3 : Math.abs(favor) * (7 - f) * 0.3;
-      boosted[f] = weight + favorEffect;
-    }
-    const pool = [];
-    for (const [face, weight] of Object.entries(boosted)) {
-      for (let i = 0; i < Math.round(weight * 10); i++) pool.push(Number(face));
-    }
-    return pool[Math.floor(Math.random() * pool.length)];
-  }
-
   getValidMoves() {
+    return [];
+  }
+  getRangedAttacks() {
     return [];
   }
   getName() {
@@ -59,15 +23,10 @@ class Unit {
 }
 
 class Warrior extends Unit {
-  attackFavor = 2; // slight edge on attack
   constructor(player, id) {
     super("warrior", player, id);
-  }
-  rollAttack() {
-    return this.weightedD6("attack");
-  }
-  rollDefense() {
-    return this.weightedD6("defense");
+    this.atk = 5;
+    this.def = 4;
   }
   getValidMoves() {
     const moves = [];
@@ -94,12 +53,8 @@ class Warrior extends Unit {
 class Lancer extends Unit {
   constructor(player, id) {
     super("lancer", player, id);
-  }
-  rollAttack() {
-    return this.weightedD6("attack");
-  }
-  rollDefense() {
-    return this.weightedD6("defense");
+    this.atk = 4;
+    this.def = 3;
   }
   getValidMoves() {
     const moves = [];
@@ -129,19 +84,37 @@ class Lancer extends Unit {
 class Monk extends Unit {
   constructor(player, id) {
     super("monk", player, id);
+    this.atk = 3;
+    this.def = 6;
   }
-  rollAttack(dist) {
-    return this.weightedDistanceRoll(dist, "attack");
-  } // penalized by distance
-  rollDefense() {
-    return this.weightedD6("defense");
-  }
+  // Move 1 step in cardinal directions
   getValidMoves() {
     const moves = [];
-    for (let r = 0; r < 8; r++)
-      for (let c = 0; c < 8; c++)
-        if (r !== this.row || c !== this.col) moves.push([r, c]);
+    for (const [dr, dc] of [
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1],
+    ]) {
+      const nr = this.row + dr,
+        nc = this.col + dc;
+      if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) moves.push([nr, nc]);
+    }
     return moves;
+  }
+  // Ranged: any non-adjacent enemy cell
+  getRangedAttacks(board) {
+    const adjSet = new Set(this.getValidMoves().map(([r, c]) => `${r},${c}`));
+    const attacks = [];
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        const key = `${r},${c}`;
+        if (key === `${this.row},${this.col}`) continue;
+        if (adjSet.has(key)) continue;
+        if (board.sq(r, c).hasEnemy(this.player)) attacks.push([r, c]);
+      }
+    }
+    return attacks;
   }
   getName() {
     return "Monk";
