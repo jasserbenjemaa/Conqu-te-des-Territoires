@@ -19,7 +19,7 @@ class Game {
     this.validMoves = [];
     this.validRangedAttacks = [];
     this.uidSeq = 0;
-    this.chosenType = "warrior";
+    this.chosenType = "soldat";
     this.cellOwnership = new Map(); // "r,c" → player id
     this.powerups = new Map(); // "r,c" → powerup def
     this.unitMods = new Map(); // unit.id → { atkMod, defMod, emoji, turns }
@@ -178,9 +178,9 @@ class Game {
 
   _mkUnit(type, pid) {
     this.uidSeq++;
-    if (type === "warrior") return new Warrior(pid, this.uidSeq);
-    if (type === "lancer") return new Lancer(pid, this.uidSeq);
-    if (type === "monk") return new Monk(pid, this.uidSeq);
+    if (type === "soldat") return new Soldat(pid, this.uidSeq);
+    if (type === "cavalier") return new Cavalier(pid, this.uidSeq);
+    if (type === "tank") return new Tank(pid, this.uidSeq);
   }
 
   /* ── Placement ── */
@@ -241,7 +241,7 @@ class Game {
     if (!this.selectedUnit) return null;
     const ok = this.validMoves.some(([mr, mc]) => mr === r && mc === c);
     const rangedOk = this.validRangedAttacks.some(
-      ([mr, mc]) => mr === r && mc === c
+      ([mr, mc]) => mr === r && mc === c,
     );
     if (!ok && !rangedOk) return null;
 
@@ -294,7 +294,7 @@ class Game {
         this.state = "OVER";
         showWinOverlay(
           winner.name,
-          "Toutes les unités ennemies ont été détruites !"
+          "Toutes les unités ennemies ont été détruites !",
         );
         return true;
       }

@@ -22,9 +22,9 @@ class Unit {
   }
 }
 
-class Warrior extends Unit {
+class Soldat extends Unit {
   constructor(player, id) {
-    super("warrior", player, id);
+    super("soldat", player, id);
     this.atk = 5;
     this.def = 4;
   }
@@ -43,16 +43,16 @@ class Warrior extends Unit {
     return moves;
   }
   getName() {
-    return "Warrior";
+    return "Soldat";
   }
   getLabel() {
-    return "W";
+    return "S";
   }
 }
 
-class Lancer extends Unit {
+class Cavalier extends Unit {
   constructor(player, id) {
-    super("lancer", player, id);
+    super("cavalier", player, id);
     this.atk = 4;
     this.def = 3;
   }
@@ -74,16 +74,16 @@ class Lancer extends Unit {
     return moves;
   }
   getName() {
-    return "Lancer";
+    return "Cavalier";
   }
   getLabel() {
-    return "L";
+    return "C";
   }
 }
 
-class Monk extends Unit {
+class Tank extends Unit {
   constructor(player, id) {
-    super("monk", player, id);
+    super("tank", player, id);
     this.atk = 3;
     this.def = 6;
   }
@@ -117,9 +117,9 @@ class Monk extends Unit {
     return attacks;
   }
   getName() {
-    return "Monk";
+    return "Tank";
   }
   getLabel() {
-    return "M";
+    return "T";
   }
 }

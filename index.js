@@ -51,7 +51,7 @@ function renderBoard() {
   const selUnit = game.selectedUnit;
   const moveSet = new Set(game.validMoves.map(([r, c]) => `${r},${c}`));
   const rangedSet = new Set(
-    (game.validRangedAttacks || []).map(([r, c]) => `${r},${c}`)
+    (game.validRangedAttacks || []).map(([r, c]) => `${r},${c}`),
   );
 
   for (let r = 0; r < 8; r++) {
@@ -84,7 +84,7 @@ function renderBoard() {
         cell.classList.add(sq.hasEnemy(pid) ? "can-attack" : "can-move");
       }
 
-      /* Ranged attacks (Monk) */
+      /* Ranged attacks (Tank) */
       if (rangedSet.has(ownerKey)) cell.classList.add("can-ranged");
 
       cell.addEventListener("click", () => onCellClick(r, c));
@@ -154,7 +154,7 @@ function onCellClick(r, c) {
         result.sq,
         result.toR,
         result.toC,
-        result.ranged || false
+        result.ranged || false,
       );
     } else {
       renderAll();
@@ -257,10 +257,10 @@ crossBtnRed.addEventListener("click", () => {
 function launchCombat(attacker, sq, toR, toC, ranged = false) {
   const enemies = sq.enemiesOf(attacker.player);
 
-  // Monk distance penalty: −1 ATK per step beyond adjacency
+  // Tank distance penalty: −1 ATK per step beyond adjacency
   let effectiveAtk = attacker.atk;
   let distPenalty = 0;
-  if (ranged && attacker.type === "monk") {
+  if (ranged && attacker.type === "tank") {
     const dist = manhattan(attacker.row, attacker.col, toR, toC);
     distPenalty = Math.max(0, dist - 1);
     effectiveAtk = Math.max(0, attacker.atk - distPenalty);
@@ -428,9 +428,8 @@ function closeDiceOverlay() {
    WIN OVERLAY
 ───────────────────────────────────────── */
 function showWinOverlay(playerName, reason) {
-  document.getElementById(
-    "win-sub-text"
-  ).textContent = `${playerName} — ${reason}`;
+  document.getElementById("win-sub-text").textContent =
+    `${playerName} — ${reason}`;
   document.getElementById("win-overlay").classList.add("show");
 }
 
