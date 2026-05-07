@@ -769,7 +769,8 @@ body {
     font-size: 20px;
     line-height: 1;
     z-index: 3;
-    pointer-events: none;
+    cursor: default;
+   
 }
 .powerup-token.boost {
     filter: drop-shadow(0 0 5px rgba(255, 220, 60, 0.8));
