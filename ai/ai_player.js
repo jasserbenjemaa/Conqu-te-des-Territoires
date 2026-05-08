@@ -9,8 +9,8 @@
 
 // Configuration du niveau Hard
 const CONFIG = {
-  MAX_DEPTH: 3,
-  TIME_LIMIT_MS: 150,
+  MAX_DEPTH: 10,
+  TIME_LIMIT_MS: 300,
   BRANCH_LIMIT: 5,
   TRANSPOSITION_CACHE_SIZE: 3000,
   MOVE_ORDERING_BONUS: 1.2,
