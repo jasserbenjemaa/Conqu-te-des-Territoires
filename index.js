@@ -332,48 +332,40 @@ function showCombat() {
     ? `${res.attacker.getName()} attaque à distance ${res.defender.getName()}${res.distPenalty ? ` (−${res.distPenalty} ATQ dist)` : ""}`
     : `${res.attacker.getName()} affronte ${res.defender.getName()}`;
 
-  [face1, face2].forEach(f => f.textContent = "?");
-  [verd, stat1, stat2, mod1, mod2, tot1, tot2].forEach(e => e.textContent = "");
+  face1.textContent = res.baseA;
+  face2.textContent = res.baseD;
+
+  stat1.textContent = res.distPenalty > 0
+    ? `+ ⚔ ATQ: ${res.effectiveAtk} (${res.attacker.atk}−${res.distPenalty} dist)`
+    : `+ ⚔ ATQ: ${res.effectiveAtk}`;
+  stat2.textContent = `+ 🛡 DÉF: ${res.defenderDef}`;
+
   mod1.className = mod2.className = "dice-modifier";
-  btn.disabled = true;
+  if (res.aMod !== 0) {
+    const mu = game.unitMods.get(res.attacker.id);
+    mod1.textContent = res.aMod > 0 ? `${mu?.emoji ?? "⚡"} ATQ +${res.aMod} bonus` : `${mu?.emoji ?? "💀"} ATQ ${res.aMod} malédiction`;
+    mod1.className = `dice-modifier ${res.aMod > 0 ? "buff" : "debuff"}`;
+  }
+  if (res.dMod !== 0) {
+    const mu = game.unitMods.get(res.defender.id);
+    mod2.textContent = res.dMod > 0 ? `${mu?.emoji ?? "✨"} DÉF +${res.dMod} bonus` : `${mu?.emoji ?? "🌑"} DÉF ${res.dMod} malédiction`;
+    mod2.className = `dice-modifier ${res.dMod > 0 ? "buff" : "debuff"}`;
+  }
 
+  tot1.textContent = `= ${res.aTotal}`;
+  tot2.textContent = `= ${res.dTotal}`;
+  tot1.style.color = res.atkWins ? "#32dc78" : "#e74c3c";
+  tot2.style.color = res.atkWins ? "#e74c3c" : "#32dc78";
+
+  const winCol = res.atkWins ? res.attacker.player : res.defender.player;
+  const col    = winCol === 1 ? "#3498db" : "#e74c3c";
+  verd.innerHTML = res.atkWins
+    ? `<span style="color:${col}">⚔ L'attaquant gagne ! (${res.aTotal} vs ${res.dTotal})</span>`
+    : `<span style="color:${col}">🛡 Le défenseur tient ! (${res.dTotal} vs ${res.aTotal})</span>`;
+
+  btn.disabled = false;
+  btn.textContent = combatIdx + 1 < combatQueue.length ? "Combat suivant" : "Terminer";
   toggleOverlay("dice-overlay", true);
-
-  setTimeout(() => { face1.textContent = res.baseA; face1.classList.remove("rolling"); void face1.offsetWidth; face1.classList.add("rolling"); }, 150);
-  setTimeout(() => { face2.textContent = res.baseD; face2.classList.remove("rolling"); void face2.offsetWidth; face2.classList.add("rolling"); }, 400);
-
-  setTimeout(() => {
-    stat1.textContent = res.distPenalty > 0
-      ? `+ ⚔ ATQ: ${res.effectiveAtk} (${res.attacker.atk}−${res.distPenalty} dist)`
-      : `+ ⚔ ATQ: ${res.effectiveAtk}`;
-    stat2.textContent = `+ 🛡 DÉF: ${res.defenderDef}`;
-
-    if (res.aMod !== 0) {
-      const mu = game.unitMods.get(res.attacker.id);
-      mod1.textContent = res.aMod > 0 ? `${mu?.emoji ?? "⚡"} ATQ +${res.aMod} bonus` : `${mu?.emoji ?? "💀"} ATQ ${res.aMod} malédiction`;
-      mod1.className = `dice-modifier ${res.aMod > 0 ? "buff" : "debuff"}`;
-    }
-
-    if (res.dMod !== 0) {
-      const mu = game.unitMods.get(res.defender.id);
-      mod2.textContent = res.dMod > 0 ? `${mu?.emoji ?? "✨"} DÉF +${res.dMod} bonus` : `${mu?.emoji ?? "🌑"} DÉF ${res.dMod} malédiction`;
-      mod2.className = `dice-modifier ${res.dMod > 0 ? "buff" : "debuff"}`;
-    }
-
-    tot1.textContent = `= ${res.aTotal}`;
-    tot2.textContent = `= ${res.dTotal}`;
-    tot1.style.color = res.atkWins ? "#32dc78" : "#e74c3c";
-    tot2.style.color = res.atkWins ? "#e74c3c" : "#32dc78";
-
-    const winCol = res.atkWins ? res.attacker.player : res.defender.player;
-    const col    = winCol === 1 ? "#3498db" : "#e74c3c";
-    verd.innerHTML = res.atkWins
-      ? `<span style="color:${col}">⚔ L'attaquant gagne ! (${res.aTotal} vs ${res.dTotal})</span>`
-      : `<span style="color:${col}">🛡 Le défenseur tient ! (${res.dTotal} vs ${res.aTotal})</span>`;
-
-    btn.disabled = false;
-    btn.textContent = combatIdx + 1 < combatQueue.length ? "Combat suivant" : "Terminer";
-  }, 800);
 }
 
 function advanceCombat() {
