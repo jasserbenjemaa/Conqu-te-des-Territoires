@@ -290,23 +290,6 @@ class MinimaxEngine {
   }
 
 
-  /**
-   * Snapshot the game state without cloning unit objects.
-   *
-   * The previous approach used `{ ...u }` which creates plain objects that
-   * lose all prototype methods (getValidMoves, getRangedAttacks, etc.).
-   * As soon as the search restored state and tried to call those methods on
-   * depth > 1, it crashed or silently returned nothing.
-   *
-   * Instead we store:
-   *   - live unit references + their mutable scalar fields (row, col)
-   *   - shallow copies of each player's units array (to restore after kills)
-   *   - shallow copies of each board cell's units array
-   *   - a copy of cellOwnership
-   *
-   * Restoration patches row/col back onto the live objects and swaps the
-   * array references — so every unit retains its prototype chain throughout.
-   */
   _cloneGameState() {
     try {
       // 1. Board cells — store the current unit-reference arrays
@@ -375,10 +358,6 @@ function getBestMove(units) {
   const best = minimax.decide(units);
   if (!best) return [];
 
-  // The search may have swapped game.p[1].units several times during
-  // simulation. Re-resolve the unit by id so we always hand index.js
-  // a reference that actually lives in the current player array —
-  // otherwise game.selectUnit() won't find it.
   const liveUnit = game.player(2).units.find(u => u.id === best.unit.id);
   if (!liveUnit) return [];
 

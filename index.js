@@ -66,7 +66,7 @@ function maybeRunAI() {
   aiThinking = true;
   setTimeout(() => {
     const plans = getBestMove(game.player(2).units);
-    console.log(plans)
+
     const plan = plans[0];
     game.selectUnit(plan.unit);
     renderAll();
