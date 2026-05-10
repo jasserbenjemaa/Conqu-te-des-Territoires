@@ -46,7 +46,7 @@ let aiThinking = false;
 
 function autoPlaceAI() {
   game.state = "PLACE_2";
-  const typesList  = ["cavalier", "tank", "soldat", "soldat", "soldat"];
+  const typesList  = ["cavalier", "tank", "soldat", "soldat", "cavalier"];
   const deployRows = game.player(2).deployRows();
   let placed = 0;
   outer:
@@ -66,11 +66,7 @@ function maybeRunAI() {
   aiThinking = true;
   setTimeout(() => {
     const plans = getBestMove(game.player(2).units);
-    if (!plans || plans.length === 0) {
-      aiThinking = false;
-      if (typeof game.endTurn === "function") { game.endTurn(); renderAll(); }
-      return;
-    }
+    console.log(plans)
     const plan = plans[0];
     game.selectUnit(plan.unit);
     renderAll();
